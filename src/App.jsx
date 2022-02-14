@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 //import { nanoid } from 'nanoid';
-import ContactList from "./ContactList";
+import ContactList from "./components/ContactList";
 import contacts from "./contacts.json";
 
 class App extends Component {
