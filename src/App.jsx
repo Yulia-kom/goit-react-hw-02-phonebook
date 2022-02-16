@@ -1,41 +1,90 @@
 import React, { Component } from "react";
-//import { nanoid } from 'nanoid';
+import ContactForm from "./components/ContactForm";
+import Filter from "./components/Filter";
 import ContactList from "./components/ContactList";
-import contacts from "./contacts.json";
+import Section from "./components/Section";
+import Container from "./components/Container";
+import { nanoid } from 'nanoid';
 
-class App extends Component {
 
+export default class App extends Component {
   state = {
-    contacts: contacts ,
+    contacts: [
+      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+    ],
     filter: '',
-    name: '',
-    number: ''
   };
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+  addContact = ({ name, number }) => {
+    const { contacts } = this.state;
+    const ReturnName = contacts.find((contact) => contact.name === name);
+    if (ReturnName) {
+      alert("This name is already in the phone book ");
+    } else {
+      const contact = {
+        id: nanoid(),
+        name,
+        number,
+      };
+      this.setState(({ contacts }) => ({
+        contacts: [contact, ...contacts],
+      }));
+    }
   };
+
+
+  deleteContact = (contactsId) => {
+        this.setState(prevState => ({
+        contacts: prevState.contacts.filter(contact => contact.id !== contactsId),
+        }));
+  };
+  
+  changeFilter = event => {
+    this.setState({ filter: event.currentTarget.value });
+  };
+
+  getVisibleContacts = () => {
+    const { filter, contacts } = this.state;
+
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
 
   render() {
-    const { contacts } = this.state;
-
+    const {filter} = this.state;
+    const visibleContacts = this.getVisibleContacts();
     return (
-    <div>
+    <Container>
       <h1>Phonebook</h1>
-      {/* <ContactForm  /> */}
-
-      <h2>Contacts</h2>
-      {/* <Filter  /> */}
-        <ContactList contacts={contacts} onDeleteContact={ this.deleteContact}/>
-    </div>
+      <Section>
+          <ContactForm onSubmit={this.addContact }/> 
+      </Section>  
+      <Section title="Contacts">
+        <Filter  value={filter} onChange={this.changeFilter}/>
+        <ContactList contacts={visibleContacts} onDeleteContact={this.deleteContact} />
+      </Section>
+    </Container>
   );
-  }
-  
-};
-
-export default App;
+  } 
+}
 
 
-// model.id = nanoid()
+
+
+
+
+
+   
+
+
+
+
+
+
+
